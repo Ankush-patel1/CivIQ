@@ -1,0 +1,229 @@
+
+---PRD---
+CivIQ – Advanced Product Requirements Document
+1. Product Overview
+CivIQ is an AI-powered civic assistant that helps users understand, prepare, and participate in elections through a personalized and actionable experience.
+2. Product Vision
+To build a trusted civic intelligence platform that simplifies democratic participation using AI and intuitive design.
+3. Target Users
+Primary: First-time voters (18–25), students.
+Secondary: General citizens, semi-urban users.
+Tertiary: Exam aspirants (UPSC, civics).
+4. User Stories
+- As a first-time voter, I want to know how to register so that I can vote.
+- As a citizen, I want to find my polling booth easily.
+- As a user, I want to know what to do if my name is missing.
+- As a student, I want simple explanations of election processes.
+5. Features
+1. Personalized Election Journey
+2. AI Chat Assistant
+3. Scenario Engine
+4. Location-Based Info
+5. Election Timeline
+6. System Architecture
+Frontend: React + Tailwind
+Backend: FastAPI
+AI Layer: OpenAI API
+Database: MongoDB/PostgreSQL
+7. API Endpoints (Sample)
+POST /onboard
+GET /journey
+POST /chat
+GET /timeline
+GET /location-info
+8. Database Schema (Simplified)
+Users:
+- id
+- age
+- location
+- registration_status
+
+Progress:
+- user_id
+- step
+- status
+
+Queries:
+- user_id
+- question
+- response
+9. Metrics
+- DAU
+- Retention
+- Completion rate
+- Queries per user
+10. Roadmap
+Phase 1: Core MVP
+Phase 2: Personalization + location
+Phase 3: Voice + verification
+---App Flow---
+CivIQ – App Flow Document
+1. Overview
+This document describes the complete user flow of the CivIQ application, covering onboarding, core interactions, and user journeys.
+2. Onboarding Flow
+1. User opens app
+2. Welcome screen
+3. User inputs:
+   - Age
+   - Location
+   - Registration status
+4. System creates user profile
+5. Redirect to dashboard
+3. Dashboard Flow
+- Displays personalized election journey
+- Shows progress tracker
+- Displays next actionable step
+- Quick access to chat assistant
+- Timeline preview
+4. Election Journey Flow
+Step 1: Registration
+Step 2: Verification
+Step 3: Polling Info
+Step 4: Voting
+Step 5: Results
+
+Each step includes:
+- Status (locked/unlocked/completed)
+- Action button
+5. AI Assistant Flow
+1. User opens chat
+2. Types or speaks query
+3. Backend processes request
+4. AI generates response
+5. Response displayed
+6. Scenario Engine Flow
+1. User asks 'what if' question
+2. System detects intent
+3. Maps to predefined scenario or AI reasoning
+4. Returns step-by-step solution
+7. Location-Based Flow
+1. System detects location or user inputs it
+2. Fetch constituency data
+3. Show polling booth and dates
+8. Timeline Flow
+- Shows election phases
+- Displays countdown
+- Updates based on current date
+9. Navigation Structure
+- Home/Dashboard
+- Journey
+- Chat
+- Timeline
+- Profile
+---Tech Stack---
+CivIQ – Tech Stack & Backend Design (Minimal Version)
+1. Tech Stack (Minimal & Practical)
+Frontend:
+- React (Vite)
+- Tailwind CSS
+
+Backend:
+- FastAPI (Python)
+- Pydantic
+
+Database:
+- PostgreSQL
+
+Auth:
+- JWT (python-jose)
+- Password hashing (passlib)
+
+Deployment:
+- Frontend: Vercel
+- Backend: Render
+
+2. Backend Architecture
+Client (React)
+    ↓
+FastAPI Routes
+    ↓
+Service Logic
+    ↓
+PostgreSQL Database
+
+3. Folder Structure
+backend/
+ ├── main.py
+ ├── routes/
+ │    ├── auth.py
+ │    ├── user.py
+ │    ├── journey.py
+ │    ├── chat.py
+ │    └── scenario.py
+ ├── models/
+ ├── schemas/
+ ├── services/
+ └── db/
+
+4. Database Schema
+Users Table
+users (
+ id UUID PRIMARY KEY,
+ name TEXT,
+ email TEXT UNIQUE,
+ password TEXT,
+ age INT,
+ location TEXT,
+ is_registered BOOLEAN,
+ created_at TIMESTAMP
+)
+Journey Steps
+journey_steps (
+ id SERIAL PRIMARY KEY,
+ title TEXT,
+ description TEXT,
+ step_order INT
+)
+User Progress
+user_progress (
+ id SERIAL PRIMARY KEY,
+ user_id UUID,
+ step_id INT,
+ status TEXT,
+ updated_at TIMESTAMP
+)
+Chat History
+chat_history (
+ id SERIAL PRIMARY KEY,
+ user_id UUID,
+ query TEXT,
+ response TEXT,
+ created_at TIMESTAMP
+)
+Scenarios
+scenarios (
+ id SERIAL PRIMARY KEY,
+ title TEXT,
+ keywords TEXT[],
+ solution TEXT
+)
+5. API Endpoints
+POST /auth/register
+POST /auth/login
+
+GET /user/profile
+PUT /user/profile
+
+GET /journey
+POST /journey/update
+
+POST /chat
+POST /scenario
+
+6. Core Logic
+Journey Logic
+- Based on user registration status
+- Unlock steps sequentially
+
+Scenario Logic
+- Match keywords from DB
+- If not found → use AI
+
+Chat Logic
+- Send user query to AI
+- Return simplified response
+
+7. Notes
+- Keep everything simple for MVP
+- Use static/mock data for location initially
+- Focus on clean structure, not complexity
