@@ -1,0 +1,15 @@
+# .gcloudignore
+# This file tells Google Cloud what to upload.
+# We want to upload the built frontend, but NOT the source node_modules.
+
+.git
+.gitignore
+node_modules/
+frontend/node_modules/
+venv/
+.venv/
+__pycache__/
+.env
+
+# DO NOT ignore frontend/dist here, because we need it for deployment!
+!frontend/dist/

@@ -72,3 +72,4 @@ secrets/
 htmlcov/
 .coverage
 .coverage.*
+scratch/

@@ -4,13 +4,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 
 load_dotenv()
 
-try:
-    from routes import chat
-except ImportError:
-    from backend.routes import chat
+# Explicit import for production reliability
+from backend.routes import chat
 
 app = FastAPI(
     title="CivIQ API", 
@@ -19,17 +18,11 @@ app = FastAPI(
 )
 
 # CORS configuration
-allowed_origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "*" # Allow all for production deploy initially
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -40,26 +33,24 @@ app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 def health_check():
     return {"status": "ok", "message": "CivIQ API is running"}
 
-# Serve Frontend Static Files
-frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+# Robust static file serving
+BASE_DIR = Path(__file__).resolve().parent.parent
+frontend_path = BASE_DIR / "frontend" / "dist"
 
-if os.path.exists(frontend_path):
-    # Serve the assets folder directly
-    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_path, "assets")), name="assets")
+if frontend_path.exists():
+    app.mount("/assets", StaticFiles(directory=str(frontend_path / "assets")), name="assets")
 
-    # Catch-all route to serve the index.html for SPA (React Router)
     @app.get("/{full_path:path}")
     async def serve_react_app(full_path: str):
-        # Prevent intercepting API routes
         if full_path.startswith("api"):
             return None 
             
-        file_path = os.path.join(frontend_path, full_path)
-        if os.path.isfile(file_path):
-            return FileResponse(file_path)
-        return FileResponse(os.path.join(frontend_path, "index.html"))
+        file_path = frontend_path / full_path
+        if file_path.is_file():
+            return FileResponse(str(file_path))
+        return FileResponse(str(frontend_path / "index.html"))
 else:
     @app.get("/")
     def read_root():
-        return {"message": "Backend is running. Frontend build not found. Run 'npm run build' in frontend folder."}
+        return {"message": "Backend is running. Frontend build not found."}
 

@@ -46,13 +46,16 @@ export default function Chat({ user }) {
         body: JSON.stringify({ message: q, language: "en" })
       });
       
-      if (!res.ok) throw new Error('Network response was not ok');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Server error');
+      }
       const data = await res.json();
       
       setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'ai', text: data.reply }]);
     } catch (err) {
       console.error("Chat API error:", err);
-      setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'ai', text: "I'm having trouble connecting to my servers right now. Please try again later or check **voters.eci.gov.in** in the meantime!" }]);
+      setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'ai', text: `⚠️ Error: ${err.message}. Please try again later or check **voters.eci.gov.in**.` }]);
     } finally {
       setLoading(false);
     }
