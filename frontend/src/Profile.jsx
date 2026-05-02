@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { CheckIcon } from './Icons';
 
 export default function Profile({ user, onReset }) {

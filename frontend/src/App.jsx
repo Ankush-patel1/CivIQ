@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { HomeIcon, MapIcon, ClockIcon, ChatIcon, UserIcon, BookIcon } from './Icons';
 import Onboarding from './Onboarding';
 import Dashboard  from './Dashboard';
@@ -21,6 +21,7 @@ export default function App() {
 
   useEffect(() => {
     const saved = localStorage.getItem('civiq_user');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (saved) { setUser(JSON.parse(saved)); setView('dashboard'); }
   }, []);
 
@@ -28,6 +29,11 @@ export default function App() {
     localStorage.setItem('civiq_user', JSON.stringify(profile));
     setUser(profile);
     setView('dashboard');
+  };
+
+  const handleUpdateUser = (updatedProfile) => {
+    localStorage.setItem('civiq_user', JSON.stringify(updatedProfile));
+    setUser(updatedProfile);
   };
 
   const handleReset = () => {
@@ -40,11 +46,9 @@ export default function App() {
 
   return (
     <div style={{ minHeight:'100vh', background:'#0b1326', display:'flex', flexDirection:'column', position:'relative', overflow:'hidden' }}>
-      {/* BG orbs */}
       <div style={{ position:'fixed', top:'-150px', left:'-150px', width:'500px', height:'500px', pointerEvents:'none', zIndex:0, borderRadius:'50%', filter:'blur(130px)', background:'radial-gradient(circle, rgba(79,70,229,0.18) 0%, transparent 70%)' }} />
       <div style={{ position:'fixed', bottom:'-100px', right:'-100px', width:'450px', height:'450px', pointerEvents:'none', zIndex:0, borderRadius:'50%', filter:'blur(130px)', background:'radial-gradient(circle, rgba(14,165,233,0.13) 0%, transparent 70%)' }} />
 
-      {/* ===== DESKTOP TOP NAV (hidden on mobile) ===== */}
       <header className="desktop-nav" style={{
         position:'fixed', top:0, left:0, right:0, zIndex:50,
         background:'rgba(11,19,38,0.90)', backdropFilter:'blur(24px)',
@@ -52,7 +56,6 @@ export default function App() {
         display:'flex', alignItems:'center', justifyContent:'space-between',
         padding:'0 40px', height:'68px',
       }}>
-        {/* Logo */}
         <div style={{ display:'flex', alignItems:'center', gap:'12px', cursor:'pointer' }} onClick={() => setView('dashboard')}>
           <div style={{ background:'linear-gradient(135deg,#4f46e5,#0ea5e9)', padding:'9px', borderRadius:'13px', flexShrink:0 }}>
             <BookIcon size={20} style={{ color:'#fff' }} />
@@ -62,7 +65,6 @@ export default function App() {
           </span>
         </div>
 
-        {/* Center nav links */}
         <nav style={{ display:'flex', alignItems:'center', gap:'4px', background:'rgba(255,255,255,0.04)', padding:'6px', borderRadius:'16px', border:'1px solid rgba(255,255,255,0.07)' }}>
           {NAV_ITEMS.map(({ id, label, Icon }) => (
             <button
@@ -83,7 +85,6 @@ export default function App() {
           ))}
         </nav>
 
-        {/* Right: user chip */}
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
           <div style={{ fontSize:'13px', fontWeight:700, color:'#c7c4d8', background:'rgba(255,255,255,0.06)', padding:'8px 14px', borderRadius:'9999px', border:'1px solid rgba(255,255,255,0.09)', display:'flex', alignItems:'center', gap:'6px' }}>
             <span>📍</span> {user?.location}
@@ -94,7 +95,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* ===== MOBILE TOP BAR (hidden on desktop) ===== */}
       {view !== 'chat' && (
         <header className="mobile-nav-top" style={{
           position:'fixed', top:0, left:0, right:0, zIndex:50,
@@ -117,16 +117,14 @@ export default function App() {
         </header>
       )}
 
-      {/* ===== MAIN CONTENT AREA ===== */}
       <main className="main-content" style={{ flex:1, position:'relative', zIndex:1, overflowY:'auto' }}>
         {view === 'dashboard' && <Dashboard user={user} navigateTo={setView} />}
-        {view === 'journey'   && <Journey   user={user} />}
+        {view === 'journey'   && <Journey   user={user} onUpdateUser={handleUpdateUser} />}
         {view === 'timeline'  && <Timeline />}
         {view === 'chat'      && <Chat      user={user} />}
         {view === 'profile'   && <Profile   user={user} onReset={handleReset} />}
       </main>
 
-      {/* ===== MOBILE BOTTOM NAV ===== */}
       <div className="mobile-bottom-nav" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:50 }}>
         <div style={{ margin:'0 12px 12px', borderRadius:'20px', padding:'6px 8px', display:'flex', justifyContent:'space-around', background:'rgba(15,22,45,0.95)', backdropFilter:'blur(24px)', border:'1px solid rgba(255,255,255,0.10)', boxShadow:'0 -4px 30px rgba(0,0,0,0.40)' }}>
           {NAV_ITEMS.map(({ id, label, Icon }) => (

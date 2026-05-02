@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react';
 
 // ---- Icons (inline SVG to avoid extra deps) ----
 const Icon = ({ d, size = 22, className = '' }) => (

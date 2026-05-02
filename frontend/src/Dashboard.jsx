@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { ChevronRight } from './Icons';
 
 export default function Dashboard({ user, navigateTo }) {

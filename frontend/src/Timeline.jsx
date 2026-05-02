@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 // Next Lok Sabha election: April–May 2029
 const ELECTION_DATE = new Date('2029-04-15T07:00:00+05:30');

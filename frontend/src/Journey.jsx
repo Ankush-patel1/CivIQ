@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CheckIcon, LockIcon, ChevronDown, ChevronUp, InfoIcon } from './Icons';
 
 const STEPS = [
@@ -104,16 +104,27 @@ const STEPS = [
   },
 ];
 
-export default function Journey({ user }) {
+export default function Journey({ user, onUpdateUser }) {
   const [expanded, setExpanded] = useState(1);
   const isReg = user?.status === 'registered';
 
+  const completedSteps = user?.completedSteps || (isReg ? [1] : []);
+
   const getStatus = (id) => {
-    if (isReg) { if (id === 1) return 'completed'; if (id === 2) return 'active'; return 'locked'; }
-    if (id === 1) return 'active'; return 'locked';
+    if (completedSteps.includes(id)) return 'completed';
+    const maxCompleted = completedSteps.length > 0 ? Math.max(...completedSteps) : 0;
+    if (id === maxCompleted + 1) return 'active';
+    return 'locked';
   };
 
-  const completedCount = isReg ? 1 : 0;
+  const handleCompleteStep = (id) => {
+    if (!onUpdateUser) return;
+    const newCompleted = [...new Set([...completedSteps, id])];
+    onUpdateUser({ ...user, completedSteps: newCompleted });
+    setExpanded(id + 1 <= 5 ? id + 1 : null);
+  };
+
+  const completedCount = completedSteps.length;
 
   return (
     <div className="page-container">
@@ -134,7 +145,9 @@ export default function Journey({ user }) {
         </div>
         <div className="progress-track"><div className="progress-fill" style={{ width:`${(completedCount/5)*100}%` }} /></div>
         <p style={{ fontSize:'13px', color:'#918fa1', marginTop:'8px' }}>
-          {isReg ? '🎉 You have a Voter ID! Continue to Step 2 — verify your name.' : '👆 Start with Step 1 — get your Voter ID (EPIC card).'}
+          {completedCount === 5 ? '🎉 Amazing! You have completed all steps.' : 
+           completedCount > 0 ? `🎉 Great progress! Continue to Step ${completedCount + 1}.` : 
+           '👆 Start with Step 1 — get your Voter ID (EPIC card).'}
         </p>
       </div>
 
@@ -212,7 +225,20 @@ export default function Journey({ user }) {
                   <div style={{ padding:'14px', borderRadius:'14px', background:'rgba(250,204,21,0.08)', border:'1px solid rgba(250,204,21,0.15)', marginBottom:'14px' }}>
                     <p style={{ fontSize:'14px', color:'#fde68a', lineHeight:1.7 }}>{step.tip}</p>
                   </div>
-                  <span className="badge badge-warning">📅 {step.deadline}</span>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                    <span className="badge badge-warning">📅 {step.deadline}</span>
+                    {isActive && (
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCompleteStep(step.id);
+                        }}
+                        style={{ padding:'8px 16px', background:'linear-gradient(135deg,#4f46e5,#0ea5e9)', color:'#fff', border:'none', borderRadius:'8px', fontSize:'13px', fontWeight:700, cursor:'pointer' }}
+                      >
+                        Mark as Done
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

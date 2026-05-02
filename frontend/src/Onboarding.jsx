@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BookIcon, ChevronRight } from './Icons';
 
 const INDIAN_STATES = [
