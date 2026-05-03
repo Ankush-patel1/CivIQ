@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckIcon, LockIcon, ChevronDown, ChevronUp, InfoIcon } from './Icons';
+import { Check as CheckIcon, Lock as LockIcon, Info as InfoIcon, ChevronUp, ChevronDown } from 'lucide-react';
 
 const STEPS = [
   {
@@ -127,118 +127,120 @@ export default function Journey({ user, onUpdateUser }) {
   const completedCount = completedSteps.length;
 
   return (
-    <div className="page-container">
-      <div style={{ marginBottom:'24px' }}>
-        <h1 style={{ fontSize:'clamp(24px, 4vw, 36px)', fontWeight:900, color:'#fff', marginBottom:'6px' }}>
-          Voter Journey
-        </h1>
-        <p style={{ color:'#c7c4d8', fontSize:'16px', lineHeight:1.6 }}>
-          Tap each step to learn exactly what to do in India's election process.
+    <div className="page-container animate-fade-in">
+      <header className="journey-header">
+        <h1 className="journey-title">Voter Journey</h1>
+        <p className="journey-subtitle">
+          Follow these 5 essential steps to participate in India's democratic process.
         </p>
-      </div>
+      </header>
 
-      {/* Progress */}
-      <div className="card" style={{ marginBottom:'24px', padding:'20px 24px' }}>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px' }}>
-          <span style={{ fontSize:'14px', fontWeight:700, color:'#c7c4d8' }}>Your Progress</span>
-          <span style={{ fontSize:'14px', fontWeight:700, color:'#c3c0ff' }}>{completedCount} of 5 steps</span>
+      {/* Progress Card */}
+      <section className="card progress-container" aria-label="Completion Progress">
+        <div className="progress-header">
+          <span className="progress-label">Your Journey Progress</span>
+          <span className="progress-value">{completedCount} of 5 Steps</span>
         </div>
-        <div className="progress-track"><div className="progress-fill" style={{ width:`${(completedCount/5)*100}%` }} /></div>
-        <p style={{ fontSize:'13px', color:'#918fa1', marginTop:'8px' }}>
-          {completedCount === 5 ? '🎉 Amazing! You have completed all steps.' : 
-           completedCount > 0 ? `🎉 Great progress! Continue to Step ${completedCount + 1}.` : 
-           '👆 Start with Step 1 — get your Voter ID (EPIC card).'}
+        <div className="progress-track" role="progressbar" aria-valuenow={completedCount} aria-valuemin="0" aria-valuemax="5">
+          <div className="progress-fill" style={{ '--progress-width': `${(completedCount / 5) * 100}%` }} />
+        </div>
+        <p className="progress-status">
+          {completedCount === 5 ? '🎉 Congratulations! You are a fully informed voter.' : 
+           completedCount > 0 ? `Keep going! Your next step is Step ${completedCount + 1}.` : 
+           'Start your journey with Step 1: Enrolment.'}
         </p>
-      </div>
+      </section>
 
-      <div style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
+      <div className="steps-list">
         {STEPS.map((step) => {
-          const status   = getStatus(step.id);
-          const isOpen   = expanded === step.id;
-          const isDone   = status === 'completed';
+          const status = getStatus(step.id);
+          const isOpen = expanded === step.id;
+          const isDone = status === 'completed';
           const isActive = status === 'active';
           const isLocked = status === 'locked';
 
           return (
             <div
               key={step.id}
-              className={`card step-card ${isActive ? 'active' : ''}`}
-              style={{ padding:0, overflow:'hidden', borderColor: isDone?'rgba(74,222,128,0.25)':isActive?'rgba(195,192,255,0.35)':undefined, opacity:isLocked?0.6:1 }}
+              className={`card step-card ${isDone ? 'completed' : ''} ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`}
             >
               <button
                 onClick={() => !isLocked && setExpanded(isOpen ? null : step.id)}
-                style={{ width:'100%', padding:'20px 24px', display:'flex', alignItems:'center', gap:'16px', background:'none', border:'none', cursor:isLocked?'default':'pointer', textAlign:'left', fontFamily:'inherit' }}
+                className="step-trigger"
+                aria-expanded={isOpen}
+                disabled={isLocked}
               >
-                <div style={{ width:'52px', height:'52px', borderRadius:'16px', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'24px', background:isDone?'rgba(74,222,128,0.15)':isActive?'rgba(79,70,229,0.25)':'rgba(255,255,255,0.05)' }}>
-                  {isDone ? <CheckIcon size={22} style={{ color:'#4ade80' }} /> : isLocked ? <LockIcon size={18} style={{ color:'#464555' }} /> : step.emoji}
+                <div className="step-icon-container">
+                  {isDone ? <CheckIcon size={24} color="#4ade80" /> : isLocked ? <LockIcon size={20} color="rgba(255,255,255,0.2)" /> : step.emoji}
                 </div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <h3 style={{ fontSize:'16px', fontWeight:800, color:isDone?'#4ade80':isLocked?'#918fa1':'#fff', marginBottom:'4px' }}>{step.title}</h3>
-                  <p style={{ fontSize:'13px', color:'#918fa1', lineHeight:1.5, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{step.short}</p>
+                <div className="step-info">
+                  <h3 className="step-title">{step.title}</h3>
+                  <p className="step-short">{step.short}</p>
                 </div>
-                <div style={{ display:'flex', alignItems:'center', gap:'10px', flexShrink:0 }}>
-                  {isDone   && <span className="badge badge-completed">Done</span>}
-                  {isActive && <span className="badge badge-active">Now</span>}
+                <div className="step-badges">
+                  {isDone && <span className="badge badge-completed">Completed</span>}
+                  {isActive && <span className="badge badge-active">Active</span>}
                   {isLocked && <span className="badge badge-locked">Locked</span>}
-                  {!isLocked && (isOpen ? <ChevronUp size={18} style={{ color:'#464555' }} /> : <ChevronDown size={18} style={{ color:'#464555' }} />)}
+                  {!isLocked && (isOpen ? <ChevronUp size={20} opacity={0.5} /> : <ChevronDown size={20} opacity={0.5} />)}
                 </div>
               </button>
 
-              <div className={`accordion-content ${isOpen && !isLocked ? 'open' : 'closed'}`}>
-                <div style={{ padding:'4px 24px 28px', borderTop:'1px solid rgba(255,255,255,0.07)' }}>
-                  <div style={{ padding:'16px', borderRadius:'16px', background:'rgba(79,70,229,0.10)', marginTop:'16px', marginBottom:'14px' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'8px' }}>
-                      <InfoIcon size={15} style={{ color:'#c3c0ff', flexShrink:0 }} />
-                      <span style={{ fontSize:'11px', fontWeight:700, color:'#c3c0ff', letterSpacing:'0.07em', textTransform:'uppercase' }}>What is this?</span>
+              <div className={`accordion-content ${isOpen && !isLocked ? 'open' : ''}`}>
+                <div className="step-details">
+                  <div className="info-box">
+                    <div className="info-label">
+                      <InfoIcon size={14} />
+                      <span>Deep Dive</span>
                     </div>
-                    <p style={{ fontSize:'14px', color:'#dae2fd', lineHeight:1.75 }}>{step.what}</p>
+                    <p className="info-text">{step.what}</p>
                   </div>
 
-                  <div style={{ padding:'14px', borderRadius:'14px', background:'rgba(14,165,233,0.08)', marginBottom:'14px' }}>
-                    <p style={{ fontSize:'11px', fontWeight:700, color:'#89ceff', letterSpacing:'0.07em', textTransform:'uppercase', marginBottom:'6px' }}>💬 Why does it matter?</p>
-                    <p style={{ fontSize:'14px', color:'#dae2fd', lineHeight:1.75 }}>{step.why}</p>
+                  <div className="why-box">
+                    <p className="why-label">Importance</p>
+                    <p className="info-text">{step.why}</p>
                   </div>
 
-                  <p style={{ fontSize:'11px', fontWeight:700, color:'#918fa1', letterSpacing:'0.07em', textTransform:'uppercase', marginBottom:'10px' }}>How to do it:</p>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(220px, 1fr))', gap:'10px', marginBottom:'16px' }}>
+                  <h4 className="section-label">Implementation Guide</h4>
+                  <div className="how-to-grid">
                     {step.howTo.map((h, j) => (
-                      <div key={j} style={{ display:'flex', gap:'12px', padding:'14px', borderRadius:'14px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.07)' }}>
-                        <span style={{ fontSize:'22px', flexShrink:0 }}>{h.icon}</span>
+                      <div key={j} className="how-to-item">
+                        <span className="how-to-icon">{h.icon}</span>
                         <div>
-                          <p style={{ fontSize:'13px', fontWeight:700, color:'#fff', marginBottom:'3px' }}>{h.label}</p>
-                          <p style={{ fontSize:'12px', color:'#c7c4d8', lineHeight:1.55 }}>{h.desc}</p>
+                          <p className="how-to-title">{h.label}</p>
+                          <p className="how-to-desc">{h.desc}</p>
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  <p style={{ fontSize:'11px', fontWeight:700, color:'#918fa1', letterSpacing:'0.07em', textTransform:'uppercase', marginBottom:'10px' }}>Documents needed:</p>
-                  <div style={{ display:'flex', flexDirection:'column', gap:'8px', marginBottom:'16px' }}>
+                  <h4 className="section-label">Requirements</h4>
+                  <div className="docs-list">
                     {step.need.map((n, j) => (
-                      <div key={j} style={{ display:'flex', gap:'10px', alignItems:'flex-start' }}>
-                        <CheckIcon size={14} style={{ color:'#4ade80', flexShrink:0, marginTop:'3px' }} />
-                        <span style={{ fontSize:'14px', color:'#dae2fd', lineHeight:1.6 }}>{n}</span>
+                      <div key={j} className="doc-item">
+                        <CheckIcon size={14} className="doc-icon" />
+                        <span className="doc-text">{n}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div style={{ padding:'14px', borderRadius:'14px', background:'rgba(250,204,21,0.08)', border:'1px solid rgba(250,204,21,0.15)', marginBottom:'14px' }}>
-                    <p style={{ fontSize:'14px', color:'#fde68a', lineHeight:1.7 }}>{step.tip}</p>
+                  <div className="tip-box">
+                    <p className="tip-text">{step.tip}</p>
                   </div>
-                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <span className="badge badge-warning">📅 {step.deadline}</span>
+
+                  <footer className="step-footer">
+                    <span className="badge badge-warning">Deadline: {step.deadline}</span>
                     {isActive && (
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
                           handleCompleteStep(step.id);
                         }}
-                        style={{ padding:'8px 16px', background:'linear-gradient(135deg,#4f46e5,#0ea5e9)', color:'#fff', border:'none', borderRadius:'8px', fontSize:'13px', fontWeight:700, cursor:'pointer' }}
+                        className="btn-primary step-complete-btn"
                       >
-                        Mark as Done
+                        Mark Step Complete
                       </button>
                     )}
-                  </div>
+                  </footer>
                 </div>
               </div>
             </div>

@@ -1,0 +1,22 @@
+{
+  "short_name": "CivIQ",
+  "name": "CivIQ — India's Voter Guide",
+  "description": "AI-powered civic assistant for the Indian election process.",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0b1326",
+  "background_color": "#0b1326",
+  "categories": ["government", "education", "utilities"],
+  "lang": "en-IN",
+  "dir": "ltr"
+}

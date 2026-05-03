@@ -8,6 +8,7 @@ __pycache__/
 .git/
 .vscode/
 .idea/
-.env
+# Allow frontend .env for build-time variable baking
+!frontend/.env
 frontend/node_modules/
 backend/venv/

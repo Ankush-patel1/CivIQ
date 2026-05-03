@@ -1,11 +1,15 @@
 import os
 import logging
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request, Depends
 from pydantic import BaseModel
-import google.generativeai as genai
+from google import genai
+from google.genai import types
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+limiter = Limiter(key_func=get_remote_address)
 
 class ChatRequest(BaseModel):
     message: str
@@ -14,13 +18,12 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     reply: str
 
-def configure_genai():
+def get_genai_client():
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         logger.warning("GEMINI_API_KEY not set.")
-        return False
-    genai.configure(api_key=api_key)
-    return True
+        return None
+    return genai.Client(api_key=api_key)
 
 SYSTEM_INSTRUCTION = """
 You are CivIQ, an expert AI assistant dedicated to the Indian Election process (Lok Sabha and State Assemblies).
@@ -29,24 +32,29 @@ Be concise, polite, and neutral. Format responses nicely with markdown.
 If the user speaks Hindi, Hinglish, or any regional language, reply in that language or English based on context.
 """
 
+try:
+    from backend.utils.auth import verify_token
+except ImportError:
+    from utils.auth import verify_token
+
 @router.post("/", response_model=ChatResponse)
-async def chat_with_civiq(request: ChatRequest):
-    if not request.message.strip():
+@limiter.limit("10/minute")
+async def chat_with_civiq(chat_data: ChatRequest, request: Request, user_token: dict = Depends(verify_token)):
+    if not chat_data.message.strip():
         raise HTTPException(status_code=400, detail="Message cannot be empty.")
     
-    if not configure_genai():
+    client = get_genai_client()
+    if not client:
         return ChatResponse(reply="I am CivIQ. (Gemini API key is not configured, please set GEMINI_API_KEY environment variable.)")
     
     try:
-        # Using your high-access Gemini 3 Flash model!
-        model = genai.GenerativeModel("gemini-3-flash-preview")
+        # Prepending instructions to ensure they are followed
+        full_prompt = f"{SYSTEM_INSTRUCTION}\n\nUser Question: {chat_data.message}"
         
-        # Prepending instructions to ensure they are followed even on older API versions
-        full_prompt = f"{SYSTEM_INSTRUCTION}\n\nUser Question: {request.message}"
-        
-        response = model.generate_content(
-            full_prompt,
-            generation_config=genai.types.GenerationConfig(
+        response = client.models.generate_content(
+            model="gemini-3-flash-preview",
+            contents=full_prompt,
+            config=types.GenerateContentConfig(
                 temperature=0.3,
             )
         )

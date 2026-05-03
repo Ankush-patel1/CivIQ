@@ -1,8 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import ErrorBoundary from './ErrorBoundary'
 import App from './App.jsx'
-import './index.css'
+import './styles/index.css'
+import { AuthProvider } from './context/AuthContext'
+import ErrorBoundary from './components/ErrorBoundary'
 
 const root = document.getElementById('root')
 
@@ -13,7 +14,9 @@ if (!root) {
 createRoot(root).render(
   <StrictMode>
     <ErrorBoundary>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </ErrorBoundary>
   </StrictMode>,
 )

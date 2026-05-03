@@ -28,6 +28,7 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#0b1326" />
+    <link rel="manifest" href="/manifest.json" />
 
     <!-- Preconnect for Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -46,8 +47,20 @@
       "offers": { "@type": "Offer", "price": "0" }
     }
     </script>
+    <!-- Google Maps Platform Bootstrap Script -->
+    <script>
+      (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+        key: "%VITE_GOOGLE_MAPS_API_KEY%", 
+        v: "weekly",
+        libraries: "places",
+        solutionChannel: "gmp_mcp_codeassist_v0.1_github"
+      });
+    </script>
   </head>
   <body>
+    <a href="#main-content" class="screen-reader-only focus:not-screen-reader-only fixed top-4 left-4 z-[999] bg-primary text-on-primary px-4 py-2 rounded-lg">
+      Skip to main content
+    </a>
     <noscript>
       <div style="padding:40px;text-align:center;font-family:sans-serif;background:#0b1326;color:#dae2fd;min-height:100vh;display:flex;align-items:center;justify-content:center;">
         <p>CivIQ requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
