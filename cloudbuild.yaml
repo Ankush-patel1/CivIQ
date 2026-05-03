@@ -5,22 +5,7 @@ steps:
       - 'build'
       - '--tag'
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/civiq:$BUILD_ID'
-      - '--build-arg'
-      - 'VITE_FIREBASE_API_KEY=${_VITE_FIREBASE_API_KEY}'
-      - '--build-arg'
-      - 'VITE_FIREBASE_AUTH_DOMAIN=${_VITE_FIREBASE_AUTH_DOMAIN}'
-      - '--build-arg'
-      - 'VITE_FIREBASE_PROJECT_ID=${_VITE_FIREBASE_PROJECT_ID}'
-      - '--build-arg'
-      - 'VITE_FIREBASE_STORAGE_BUCKET=${_VITE_FIREBASE_STORAGE_BUCKET}'
-      - '--build-arg'
-      - 'VITE_FIREBASE_MESSAGING_SENDER_ID=${_VITE_FIREBASE_MESSAGING_SENDER_ID}'
-      - '--build-arg'
-      - 'VITE_FIREBASE_APP_ID=${_VITE_FIREBASE_APP_ID}'
-      - '--build-arg'
-      - 'VITE_GOOGLE_MAPS_API_KEY=${_VITE_GOOGLE_MAPS_API_KEY}'
-      - '--build-arg'
-      - 'VITE_API_URL=${_VITE_API_URL}'
+
       - '.'
 
   # Step 2: Push the image to Artifact Registry
@@ -49,14 +34,6 @@ images:
 
 # Default substitution values (overridden at build time via --substitutions flag)
 substitutions:
-  _VITE_FIREBASE_API_KEY: ''
-  _VITE_FIREBASE_AUTH_DOMAIN: ''
-  _VITE_FIREBASE_PROJECT_ID: ''
-  _VITE_FIREBASE_STORAGE_BUCKET: ''
-  _VITE_FIREBASE_MESSAGING_SENDER_ID: ''
-  _VITE_FIREBASE_APP_ID: ''
-  _VITE_GOOGLE_MAPS_API_KEY: ''
-  _VITE_API_URL: ''
   _GEMINI_API_KEY: ''
 
 options:
