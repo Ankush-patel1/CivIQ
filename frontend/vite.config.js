@@ -8,7 +8,16 @@ export default defineConfig({
     target: 'es2015',
     sourcemap: false,       // no sourcemaps in prod → smaller bundle
     minify: 'esbuild',
-    chunkSizeWarningLimit: 400,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+          lucide: ['lucide-react']
+        }
+      }
+    }
   },
   server: {
     port: 5173,
