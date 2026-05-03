@@ -98,14 +98,14 @@ export default function Timeline({ currentTime }) {
 
       {/* Countdown Card */}
       <div className="animate-fade-in">
-        <div className="countdown-card">
-          <div className="countdown-decor" />
+        <div className="tl-countdown-card">
+          <div className="tl-countdown-decor" />
           <h2 className="countdown-title">Countdown to Lok Sabha 2029</h2>
-          <div className="countdown-grid">
+          <div className="tl-countdown-grid">
             {Object.entries(countdown).map(([unit, val]) => (
-              <div key={unit} className="countdown-item">
-                <span className="countdown-value">{String(val).padStart(2,'0')}</span>
-                <span className="countdown-unit">{unit}</span>
+              <div key={unit} className="tl-countdown-item">
+                <span className="tl-countdown-value">{String(val).padStart(2,'0')}</span>
+                <span className="tl-countdown-unit">{unit}</span>
               </div>
             ))}
           </div>
